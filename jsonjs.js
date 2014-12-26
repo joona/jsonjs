@@ -4,7 +4,7 @@ module.exports = {
 
     decorated['dget']=function() {
       if(arguments.length == 0) {
-        throw error("dget must have at least 1 argument");
+        return d;
       }
       var current=d;
       for (i = 0; i < arguments.length; i++) {

@@ -37,6 +37,7 @@ describe('use jsonjs to decorate objects', function() {
     expect(dobj.dget('a','b','c')).to.equal('d');
     expect(dobj.data['a']['b']['c']).to.equal('d');
     expect(obj['a']['b']['c']).to.equal('d');
+    expect(dobj.dget()).to.equal(obj);
   });
 
   it('should create decorated object', function() {
