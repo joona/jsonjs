@@ -1,7 +1,7 @@
 {
   "name": "jsonjs",
   "version": "0.0.1",
-  "description": "Jsonj inspired library for procesion json",
+  "description": "Jsonj inspired library for procesing json",
   "main": "jsonjs.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec tests/*.js"
