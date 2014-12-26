@@ -1,0 +1,19 @@
+{
+  "name": "jsonjs",
+  "version": "0.0.1",
+  "description": "Jsonj inspired library for procesion json",
+  "main": "jsonjs.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec tests/*.js"
+  },
+  "keywords": [
+    "jsonjs",
+    "jsonj"
+  ],
+  "author": "Jilles van Gurp",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "mocha": "^2.1.0"
+  }
+}
