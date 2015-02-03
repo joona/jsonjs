@@ -1,16 +1,34 @@
 {
   "name": "jsonjs",
-  "version": "0.0.1",
-  "description": "Jsonj inspired library for procesing json",
+  "version": "0.0.2",
+  "description": "Jsonj inspired library for procesing JSON",
   "main": "jsonjs.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec tests/*.js"
   },
   "keywords": [
     "jsonjs",
-    "jsonj"
+    "jsonj",
+    "json"
   ],
-  "author": "Jilles van Gurp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inbot/jsonjs"
+  },
+    "bugs": {
+    "url": "https://github.com/inbot/jsonjs/issues"
+  },
+  "author": "Inbot <dev@inbot.io>",
+  "contributors": [
+    {
+      "name": "Joona Kulmala",
+      "email": "jmkulmala@gmail.com"
+    },
+    {
+      "name": "Jilles van Gurp",
+      "email": "jillesvangurp@gmail.com"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "chai": "^1.10.0",

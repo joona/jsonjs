@@ -2,6 +2,14 @@
 
 This library is inspired by [jsonj](https://github.com/jillesvangurp/jsonj), the java library for parsing and manipulating json structures in java that we developed at [Inbot](http://inbot.io). While javascript of course supports json natively, it misses a few of the features present in jsonj. This small library attempts to rectify this.
 
+## Install
+
+```
+$ npm install jsonjs
+```
+
+## Usage
+
 Some examples from the included tests:
 
 ```javascript
