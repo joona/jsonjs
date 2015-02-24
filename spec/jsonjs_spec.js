@@ -77,6 +77,8 @@ describe('jsonjs module', function(){
         expect(value).toEqual(jasmine.any(Object));
         expect(value).toEqual({ a: 1 });
         expect(json.data.foo).toEqual({ a: 1 });
+        expect(json.get('foo')).toEqual({ a: 1 });
+        expect(json.get('foo', 'a')).toEqual(1);
       });
       
       it('should create new object given non existing value', function(){
@@ -100,6 +102,7 @@ describe('jsonjs module', function(){
         value.b = 'foo';
         expect(value).toEqual(jasmine.objectContaining({ b: 'foo' }));
         expect(json.data.foo.b).toEqual('foo');
+        expect(json.get('foo', 'b')).toEqual('foo');
       });
 
       it('should reflect changes to returned value to the stubbed empty object', function(){
@@ -113,6 +116,7 @@ describe('jsonjs module', function(){
         value.b = 'foo';
         expect(value).toEqual(jasmine.objectContaining({ b: 'foo' }));
         expect(json.data.baa.b).toEqual('foo');
+        expect(json.get('baa', 'b')).toEqual('foo');
       });
       
       it('should throw if returned value is not an object', function(){
@@ -130,6 +134,7 @@ describe('jsonjs module', function(){
         expect(value).toEqual(jasmine.any(Array));
         expect(value).toEqual([1, 2]);
         expect(json.data.foo).toEqual([1, 2]);
+        expect(json.get('foo')).toEqual([1, 2]);
       });
 
       it('should create new array given non existing value', function(){
@@ -147,6 +152,8 @@ describe('jsonjs module', function(){
         value.push(3);
         expect(value).toEqual([1, 2, 3]);
         expect(json.data.foo).toEqual([1, 2, 3]);
+        expect(json.get('foo')).toEqual([1, 2, 3]);
+        expect(json.get('foo', 2)).toEqual(3);
       });
 
       it('should reflect changes to returned value to the stubbed empty array', function(){
@@ -157,6 +164,8 @@ describe('jsonjs module', function(){
         value.push(3);
         expect(value).toEqual([3]);
         expect(json.data.baa).toEqual([3]);
+        expect(json.get('baa')).toEqual([3]);
+        expect(json.get('baa', 0)).toEqual(3);
       });
 
       it('should throw if returned value is not an array', function(){

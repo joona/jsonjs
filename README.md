@@ -10,56 +10,39 @@ $ npm install jsonjs
 
 ## Usage
 
-Some examples from the included tests:
-
 ```javascript
+var jsonjs = require('jsonjs');
 
-var expect=require('chai').expect;
-var jsonjs=require('../jsonjs');
-
-describe('use jsonjs to decorate objects', function() {
-  it('should create decorated object that wraps original', function() {
-    var obj={"foo":42};
-    var dobj=jsonjs.decorate(obj);
-    console.log(obj);
-  })
-
-  it('should add smart get to object', function() {
-    var obj={
-      "foo":42,
-      "a":{
-        "b":42,
-        "c":[1,{"two":{"three":"four"}}]
-      }
-    };
-    var dobj=jsonjs.decorate(obj);
-    expect(dobj.dget('a','b')).to.equal(42);
-    expect(dobj.dget('i','dont','exist')).to.be.undefined;
-    expect(dobj.dget('a','c',0)).to.equal(1);
-    expect(dobj.dget('a','c',1,'two','three')).to.equal('four');
-  });
-
-  it('should put stuff deep into an object', function() {
-    var obj={};
-    var dobj=jsonjs.decorate(obj);
-    dobj.dput('a','b','c','d')
-    expect(dobj.dget('a','b','c')).to.equal('d');
-  });
-
-  it('should manipulate decorated object and access it', function() {
-    var obj={};
-    var dobj=jsonjs.decorate(obj);
-    dobj.dput('a','b','c','d')
-    expect(dobj.dget('a','b','c')).to.equal('d');
-    expect(dobj.data['a']['b']['c']).to.equal('d');
-    expect(obj['a']['b']['c']).to.equal('d');
-  });
-
-  it('should create decorated object', function() {
-    var dobj=jsonjs.object();
-    dobj.dput('a','b','c','d')
-    expect(dobj.dget('a','b','c')).to.equal('d');
-  });
+var obj = jsonjs.decorate({
+  foo: 'baa',
+  arr: []
 });
 
+console.log(obj.get('foo'));                                // => "baa"
+
+// set value deep into the object
+obj.put('cool', 'deep', 'nested', 'object', true);
+console.log(obj.get('cool', 'deep', 'nested', 'object'));   // => true
+
+var realObject = obj.get();                                 // get real raw object
+console.log(realObject.cool.deep.nested.object);            // => true
+
+var newObject = obj.getOrCreateObject('im', 'new');
+// becomes { im: { new: {} }, arr: [Array...], cool: [Object...] }
+
+console.log(newObject);                                     // => {}
+
+newObject.newProperty = 'new value';
+console.log(newObject);                                     // => { newProperty: 'new value' }
+console.log(obj.get().im.new);                              // => { newProperty: 'new value' }
+console.log(obj.get('im', 'new', 'newProperty');            // => "new value"
+
+var arr = obj.getOrCreateArray('arr');
+console.log(arr);                                           // => []
+arr.push('x');
+console.log(arr);                                           // => ["x"]
+console.log(obj.get('arr'))                                 // => ["x"]
 ```
+
+Check tests for more examples.
+
