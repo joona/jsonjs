@@ -1,12 +1,50 @@
 "use strict";
 
+function clone(obj) {
+  var cloned = {};
+  for (var i in obj) {
+    if (obj.hasOwnProperty(i)) {
+      cloned[i] = obj[i];
+    }
+  }
+  return cloned;
+};
+
+function deepClone(obj) {
+  if (obj == null || typeof obj !== 'object') {
+    return obj;
+  }
+  var cloned = obj.constructor();
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      cloned[key] = deepClone(obj[key]);
+    }
+  }
+  return cloned;
+}
+
+/**
+ * 
+ * @param {object} data
+ * @returns {JSONObject}
+ * @constructor
+ */
 function JSONObject(data){
+  if(data instanceof JSONObject) {
+    return data;
+  }
+  
   this.data = data || {};
   return this;
 }
 
+/**
+ * Get a value from decorated object
+ * @param {...*|*[]} key
+ * @returns {*|{}}
+ */
 JSONObject.prototype.get = function() {
-  var keys, k, current = this.data;
+  var keys, current = this.data;
   
   if(arguments[0] && Array.isArray(arguments[0])) {
     keys = arguments[0];
@@ -27,13 +65,21 @@ JSONObject.prototype.get = function() {
   return current;
 };
 
-
+/**
+ * @alias get
+ */
 JSONObject.prototype.dget = function(){
   return JSONObject.prototype.get.apply(this, arguments);
 };
 
+/**
+ * Update a value inside the decorated object
+ * @param {...*|*[]} key
+ * @param value
+ * @returns {JSONObject}
+ */
 JSONObject.prototype.put = function(key, value) {
-  var keys, k, next, current = this.data;
+  var keys, current = this.data;
   
   if(arguments.length < 2) {
     throw new Error("put needs at least 2 arguments");
@@ -65,10 +111,67 @@ JSONObject.prototype.put = function(key, value) {
   return this;
 };
 
+/**
+ * @alias put
+ */
 JSONObject.prototype.dput = function(){
   return JSONObject.prototype.put.apply(this, arguments);
 };
 
+/**
+ * Return a reference to internal object
+ * @returns {object}
+ */
+JSONObject.prototype.object = function(){
+  return this.get();
+};
+
+/**
+ * Return a shallow copy of internal object
+ * @returns {*}
+ */
+JSONObject.prototype.shallowClone = function(){
+  return clone(this.object());
+};
+
+/**
+ * Deep clone an internal object
+ * @returns {object}
+ */
+JSONObject.prototype.clone = function(){
+  return this.deepClone();
+};
+
+/**
+ * Deep clone an internal object
+ * @returns {object}
+ */
+JSONObject.prototype.deepClone = function(){
+  return deepClone(this.object());
+};
+
+/**
+ * Return a copy of JSONObject instance
+ * @returns {JSONObject}
+ */
+JSONObject.prototype.decoratedClone = function(){
+  var data = this.deepClone();
+  return new JSONObject(data);
+};
+
+/**
+ * @alias decoratedClone
+ */
+JSONObject.prototype.copy = function(){
+  return this.decoratedClone.call(this);
+};
+
+/**
+ * Get an object with given keys or initialize and return empty object
+ * @param {(...string|string[])} key
+ * @returns {object|{}}
+ * @throws {TypeError} if value is not an object
+ */
 JSONObject.prototype.getOrCreateObject = function(){
   var keys = Array.prototype.slice.call(arguments);
   var value = this.get(keys);
@@ -87,6 +190,11 @@ JSONObject.prototype.getOrCreateObject = function(){
   }
 };
 
+/**
+ * Get an array with given keys or initialize and return empty array
+ * @returns {Array|[]}
+ * @throws {TypeError} if value is not an array
+ */
 JSONObject.prototype.getOrCreateArray = function(){
   var keys = Array.prototype.slice.call(arguments);
   var value = this.get(keys);
@@ -112,5 +220,7 @@ module.exports = {
     return new JSONObject();
   },
   
-  JSONObject: JSONObject
+  JSONObject: JSONObject,
+  clone: clone,
+  deepClone: deepClone
 };

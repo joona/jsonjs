@@ -212,6 +212,56 @@ describe('jsonjs module', function(){
         expect(function(){ json.getOrCreateArray('baa') }).toThrow();
       });
     });
+    
+    describe('#object', function(){
+      it('should return reference to the original object', function(){
+        var obj = jsonjs.decorate({ foo: 'baa' });
+        expect(obj.object()).toBe(obj.data);
+      });
+    });
+    
+    describe('#deepClone', function(){
+      var original;
+      
+      beforeEach(function(){
+        original = jsonjs.decorate({ foo: 'baa' });
+      });
+      
+      it('should return copy of internal object', function(){
+        var cloned = original.deepClone();
+        expect(cloned).toEqual(original.object());
+        expect(cloned).not.toBe(original.object());
+      });
+      
+      it('should not modify original object when cloned object is modified', function(){
+        var cloned = original.deepClone();
+        cloned.foo = 'foobaa';
+        expect(cloned).not.toEqual(original.object());
+      });
+    });
+    
+    describe('#decoratedClone', function(){
+      var original;
+
+      beforeEach(function(){
+        original = jsonjs.decorate({ foo: 'baa' });
+      });
+      
+      it('should return copy of JSONObject instance', function(){
+        var cloned = original.decoratedClone();
+        expect(cloned).toEqual(jasmine.any(jsonjs.JSONObject));
+        expect(cloned.object()).toEqual(original.object());
+        expect(cloned).not.toBe(original);
+      });
+      
+      it('should not modify original JSONObject when cloned instance is modified', function(){
+        var cloned = original.decoratedClone();
+        cloned.put('foo', 'foobaa');
+        expect(cloned.get('foo')).not.toEqual(original.get('foo'));
+        expect(cloned.object()).not.toBe(original.object());
+        expect(cloned.object()).not.toEqual(original.object());
+      });
+    });
   });
 });
 
