@@ -52,8 +52,13 @@ JSONObject.prototype.put = function(key, value) {
   for (i = 0; i < keys.length; i++){
     k = keys[i];
     if(current[k] === undefined) {
-      current[k] = (keys.length - 1) == i ? value : {};
+      current[k] = {};
     }
+    
+    if((keys.length - 1) == i) {
+      current[k] = value;
+    }
+    
     current = current[k];
   }
 

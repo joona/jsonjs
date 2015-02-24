@@ -64,6 +64,44 @@ describe('jsonjs module', function(){
         expect(json.get('a', 'b', 'c', 'd')).toEqual(123);
         expect(json.data.a.b.c.d).toEqual(123);
       });
+      
+      it('should update existing value', function(){
+        var json = jsonjs.object();
+        json.put('a', 'b', 'c', 'd', 123);
+        json.put('a', 'b', 'c', 'd', 321);
+        expect(json.get('a', 'b', 'c', 'd')).toEqual(321);
+      });
+      
+      it('should put value to array', function(){
+        var json = jsonjs.decorate({ arr: ['a', 'b'] });
+        json.put('arr', 0, 'x');
+        expect(json.get('arr', 0)).toEqual('x');
+      });
+      
+      it('should work with complex nested structures', function(){
+        var json = jsonjs.decorate({
+          a: {
+           b: [
+             {
+               title: 'foo',
+               arr: []
+             },
+             {
+               title: 'baa',
+               arr: []
+             }
+           ] 
+          }
+        });
+        
+        expect(json.put('a', 'b', 0, 'title', 'foobaa'));
+        expect(json.get('a', 'b', 0, 'title')).toEqual('foobaa');
+        expect(json.get().a.b[0].title).toEqual('foobaa');
+
+        expect(json.put('a', 'b', 0, 'arr', 0, 'a'));
+        expect(json.get('a', 'b', 0, 'arr', 0)).toEqual('a');
+        expect(json.get().a.b[0].arr[0]).toEqual('a');
+      });
     });
     
     describe('#getOrCreateObject', function(){
