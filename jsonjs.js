@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * Clone an object
+ * @param {object} obj
+ * @returns {object}
+ */
 function clone(obj) {
   var cloned = {};
   for (var i in obj) {
@@ -10,6 +15,11 @@ function clone(obj) {
   return cloned;
 };
 
+/**
+ * Deep clone an object
+ * @param {object} obj
+ * @returns {object}
+ */
 function deepClone(obj) {
   if (obj == null || typeof obj !== 'object') {
     return obj;
@@ -25,13 +35,18 @@ function deepClone(obj) {
 
 /**
  * 
- * @param {object} data
+ * @param {object} [data]
+ * @param {boolean} [clone=false] - The original object will be cloned if true.
  * @returns {JSONObject}
  * @constructor
  */
-function JSONObject(data){
+function JSONObject(data, clone){
   if(data instanceof JSONObject) {
     return data;
+  }
+  
+  if(typeof data === "object" && clone) {
+    data = deepClone(data);
   }
   
   this.data = data || {};
@@ -212,15 +227,36 @@ JSONObject.prototype.getOrCreateArray = function(){
 };
 
 module.exports = {
-  decorate: function(data){
-    return new JSONObject(data);
+  /**
+   * Clone given object and decorate it
+   * @param {object} object
+   * @returns {JSONObject}
+   */
+  decoratedCopy: function(object){
+    return new JSONObject(object, true);
   },
-  
+
+  /**
+   * Decorate object
+   * @param {object} [object]
+   * @returns {JSONObject}
+   */
+  decorate: function(object){
+    return new JSONObject(object);
+  },
+
+  /**
+   * Return empty decorated object
+   * @returns {JSONObject}
+   */
   object: function(){
     return new JSONObject();
   },
   
   JSONObject: JSONObject,
-  clone: clone,
-  deepClone: deepClone
+  
+  utils: {
+    clone: clone,
+    deepClone: deepClone
+  }
 };

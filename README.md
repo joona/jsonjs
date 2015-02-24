@@ -11,7 +11,6 @@ $ npm install jsonjs
 ## Usage
 
 ```javascript
-var jsonjs = require('jsonjs');
 var obj = jsonjs.decorate({
   foo: 'baa',
   arr: []
@@ -23,16 +22,16 @@ expect(obj.get('arr')).toEqual(jasmine.any(Array));
 obj.put('cool', 'deep', 'nested', 'object', true);
 expect(obj.get('cool', 'deep', 'nested', 'object')).toEqual(true);
 
-var realObject = obj.get();
+var realObject = obj.object();
 expect(realObject.cool.deep.nested.object).toEqual(true);
 
 var newObject = obj.getOrCreateObject('im', 'new');
-expect(obj.get()).toEqual(jasmine.objectContaining({ im: { new: {} } }));
+expect(obj.object()).toEqual(jasmine.objectContaining({ im: { new: {} } }));
 expect(newObject).toEqual({});
 
 newObject.newProperty = 'new value';
 expect(newObject).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
-expect(obj.get().im.new).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
+expect(obj.object().im.new).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
 expect(obj.get('im', 'new', 'newProperty')).toEqual("new value");
 expect(obj.data.im.new.newProperty).toEqual("new value");
 
@@ -45,6 +44,14 @@ arr.push('x');
 expect(arr.length).toBe(1);
 expect(arr).toEqual(['x']);
 expect(obj.get('arr')).toEqual(['x']);
+
+var decoratedCopy = obj.copy();
+expect(decoratedCopy).not.toBe(obj);
+expect(decoratedCopy.object()).toEqual(obj.object());
+
+var originalObjectClone = obj.clone();
+expect(originalObjectClone).not.toBe(obj.object());
+expect(originalObjectClone).toEqual(obj.object());
 ```
 
 Check [tests](https://github.com/Inbot/jsonjs/blob/master/spec/jsonjs_spec.js) for more examples.

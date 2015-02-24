@@ -10,6 +10,10 @@ describe('jsonjs module', function(){
       expect((json instanceof jsonjs.JSONObject)).toBeTruthy();
       expect(json.data).toEqual(jasmine.any(Object));
       expect(json.data.foo).toEqual(42);
+      expect(json.data).toBe(obj);
+      json.put('foo', 43);
+      expect(json.get('foo')).toEqual(43);
+      expect(obj.foo).toEqual(43);
     });
     
     it('should create empty json object instance if no data is definied', function(){
@@ -22,9 +26,26 @@ describe('jsonjs module', function(){
   describe('#object', function(){
     it('should create decorated object instance', function(){
       var json = jsonjs.object();
+      expect(json).toEqual(jasmine.any(jsonjs.JSONObject));
       expect(json instanceof jsonjs.JSONObject).toBeTruthy();
       expect(json.data).toEqual(jasmine.any(Object));
       expect(Object.keys(json.data).length).toBe(0);
+    });
+  });
+  
+  describe('#decoratedCopy', function(){
+    it('should clone the original object and decorate it', function(){
+      var original = { foo: 'baa' };
+      var json = jsonjs.decoratedCopy(original);
+      expect(json).toEqual(jasmine.any(jsonjs.JSONObject));
+      expect(json.data).toEqual(original);
+      expect(json.data).not.toBe(original);
+      json.data.foo = 'foobaa';
+      expect(original.foo).not.toEqual('foobaa');
+      expect(json.get('foo')).toEqual('foobaa');
+      json.put('foo', 'f00baa');
+      expect(original.foo).not.toEqual('f00baa');
+      expect(json.get('foo')).toEqual('f00baa');
     });
   });
   
@@ -278,16 +299,16 @@ describe('usage example', function(){
     obj.put('cool', 'deep', 'nested', 'object', true);
     expect(obj.get('cool', 'deep', 'nested', 'object')).toEqual(true);
 
-    var realObject = obj.get();
+    var realObject = obj.object();
     expect(realObject.cool.deep.nested.object).toEqual(true);
 
     var newObject = obj.getOrCreateObject('im', 'new');
-    expect(obj.get()).toEqual(jasmine.objectContaining({ im: { new: {} } }));
+    expect(obj.object()).toEqual(jasmine.objectContaining({ im: { new: {} } }));
     expect(newObject).toEqual({});
 
     newObject.newProperty = 'new value';
     expect(newObject).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
-    expect(obj.get().im.new).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
+    expect(obj.object().im.new).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
     expect(obj.get('im', 'new', 'newProperty')).toEqual("new value");
     expect(obj.data.im.new.newProperty).toEqual("new value");
 
@@ -300,5 +321,13 @@ describe('usage example', function(){
     expect(arr.length).toBe(1);
     expect(arr).toEqual(['x']);
     expect(obj.get('arr')).toEqual(['x']);
+    
+    var decoratedCopy = obj.copy();
+    expect(decoratedCopy).not.toBe(obj);
+    expect(decoratedCopy.object()).toEqual(obj.object());
+    
+    var originalObjectClone = obj.clone();
+    expect(originalObjectClone).not.toBe(obj.object());
+    expect(originalObjectClone).toEqual(obj.object());
   });
 });
