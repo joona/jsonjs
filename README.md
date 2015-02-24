@@ -12,37 +12,40 @@ $ npm install jsonjs
 
 ```javascript
 var jsonjs = require('jsonjs');
-
 var obj = jsonjs.decorate({
   foo: 'baa',
   arr: []
 });
 
-console.log(obj.get('foo'));                                // => "baa"
+expect(obj.get('foo')).toEqual('baa');
+expect(obj.get('arr')).toEqual(jasmine.any(Array));
 
-// set value deep into the object
 obj.put('cool', 'deep', 'nested', 'object', true);
-console.log(obj.get('cool', 'deep', 'nested', 'object'));   // => true
+expect(obj.get('cool', 'deep', 'nested', 'object')).toEqual(true);
 
-var realObject = obj.get();                                 // get real raw object
-console.log(realObject.cool.deep.nested.object);            // => true
+var realObject = obj.get();
+expect(realObject.cool.deep.nested.object).toEqual(true);
 
 var newObject = obj.getOrCreateObject('im', 'new');
-// becomes { im: { new: {} }, arr: [Array...], cool: [Object...] }
-
-console.log(newObject);                                     // => {}
+expect(obj.get()).toEqual(jasmine.objectContaining({ im: { new: {} } }));
+expect(newObject).toEqual({});
 
 newObject.newProperty = 'new value';
-console.log(newObject);                                     // => { newProperty: 'new value' }
-console.log(obj.get().im.new);                              // => { newProperty: 'new value' }
-console.log(obj.get('im', 'new', 'newProperty');            // => "new value"
+expect(newObject).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
+expect(obj.get().im.new).toEqual(jasmine.objectContaining({ newProperty: 'new value' }));
+expect(obj.get('im', 'new', 'newProperty')).toEqual("new value");
+expect(obj.data.im.new.newProperty).toEqual("new value");
 
 var arr = obj.getOrCreateArray('arr');
-console.log(arr);                                           // => []
+expect(arr).toEqual(jasmine.any(Array));
+expect(arr.length).toBe(0);
+expect(arr).toEqual([]);
+
 arr.push('x');
-console.log(arr);                                           // => ["x"]
-console.log(obj.get('arr'))                                 // => ["x"]
+expect(arr.length).toBe(1);
+expect(arr).toEqual(['x']);
+expect(obj.get('arr')).toEqual(['x']);
 ```
 
-Check tests for more examples.
+Check [tests](https://github.com/Inbot/jsonjs/blob/master/spec/jsonjs_spec.js) for more examples.
 
