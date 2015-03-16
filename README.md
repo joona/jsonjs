@@ -1,4 +1,7 @@
-# Introduction
+[![npm version](https://badge.fury.io/js/jsonjs.svg)](http://badge.fury.io/js/jsonjs) 
+![Travis CI](https://travis-ci.org/Inbot/jsonjs.svg?branch=master)
+
+# Introduction 
 
 This library is inspired by [jsonj](https://github.com/jillesvangurp/jsonj), the java library for parsing and manipulating json structures in java that we developed at [Inbot](http://inbot.io). While javascript of course supports json natively, it misses a few of the features present in jsonj. This small library attempts to rectify this.
 
