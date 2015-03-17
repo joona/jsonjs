@@ -13,7 +13,7 @@ function clone(obj) {
     }
   }
   return cloned;
-};
+}
 
 /**
  * Deep clone an object
