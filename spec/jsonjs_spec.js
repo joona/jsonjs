@@ -283,6 +283,69 @@ describe('jsonjs module', function(){
         expect(cloned.object()).not.toEqual(original.object());
       });
     });
+
+    describe('utils', function(){
+      describe('#deepMerge', function(){
+        var original;
+
+        beforeEach(function(){
+          original = { foo: 'baa', foobaa: { foo: 'baa' } };
+        });
+
+        it('should append properties to empty object', function(){
+          var blank = {};
+          jsonjs.utils.deepMerge(blank, original);
+          expect(blank).toEqual(original);
+        });
+
+        it('should override properties on top level', function(){
+          jsonjs.utils.deepMerge(original, {
+            foo: 'foo'
+          });
+          expect(original.foo).toEqual('foo');
+        });
+
+        it('should override or append nested properties', function(){
+          jsonjs.utils.deepMerge(original, {
+            foobaa: {
+              foo: 'foo',
+              baa: 'foobaa'
+            }
+          });
+          expect(original.foo).toEqual('baa');
+          expect(original.foobaa.foo).toEqual('foo');
+          expect(original.foobaa.baa).toEqual('foobaa');
+        });
+
+        it('should override or append nested properties', function(){
+          jsonjs.utils.deepMerge(original, {
+            foobaa: 'foobaa'
+          });
+          expect(original.foobaa).toEqual(jasmine.any(String));
+          expect(original.foobaa).toEqual('foobaa');
+        });
+      });
+
+      describe('#extend', function(){
+        var original;
+
+        beforeEach(function(){
+          original = { foo: 'baa', baa: { foo: 'baa' } };
+        });
+
+        it('should extend empty object with two objects', function(){
+          var blank = {};
+          jsonjs.utils.extend(blank, original, {
+            xyz: 1,
+            foo: 'foobaa'
+          });
+
+          expect(blank.baa).toEqual(original.baa);
+          expect(blank.foo).toEqual('foobaa');
+          expect(blank.xyz).toBe(1);
+        });
+      });
+    })
   });
 });
 

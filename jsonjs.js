@@ -34,6 +34,42 @@ function deepClone(obj) {
 }
 
 /**
+ * Deep merge one object to another
+ * @param one
+ * @param another
+ * @returns {*}
+ */
+function deepMerge(one, another) {
+  if (another == null || typeof another !== 'object') {
+    return another;
+  }
+
+  if(one == null && typeof another === 'object') {
+    one = {};
+  }
+
+  var cloned = deepClone(another);
+
+  for (var key in cloned) {
+    if (cloned.hasOwnProperty(key)) {
+      one[key] = deepMerge(one[key], another[key]);
+    }
+  }
+  return one;
+}
+
+function extend(){
+  var args = Array.prototype.slice.call(arguments);
+  var original = args.shift();
+
+  args.forEach(function(obj){
+    deepMerge(original, obj);
+  });
+
+  return original;
+}
+
+/**
  * 
  * @param {object} [data]
  * @param {boolean} [clone=false] - The original object will be cloned if true.
@@ -257,6 +293,8 @@ module.exports = {
   
   utils: {
     clone: clone,
-    deepClone: deepClone
+    deepClone: deepClone,
+    deepMerge: deepMerge,
+    extend: extend
   }
 };
