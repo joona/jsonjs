@@ -1,6 +1,12 @@
 "use strict";
 
 /**
+ * TODO:
+ * - keep map of nested key paths to prevent looping all the time
+ * - add more features from original jsonj
+ */
+
+/**
  * Clone an object
  * @param {object} obj
  * @returns {object}
@@ -167,6 +173,35 @@ JSONObject.prototype.put = function(key, value) {
  */
 JSONObject.prototype.dput = function(){
   return JSONObject.prototype.put.apply(this, arguments);
+};
+
+
+JSONObject.prototype.delete = function(){
+  var keys, current = this.data;
+
+  if(arguments.length < 1) {
+    throw new Error("delete needs at least 1 arguments");
+  }
+
+  if(arguments[0] && Array.isArray(arguments[0])) {
+    keys = arguments[0];
+  } else {
+    keys = Array.prototype.slice.call(arguments);
+  }
+
+  var i, last;
+  for (i = 0; i < keys.length; i++){
+    last = current;
+    current = current[keys[i]];
+    if(current === undefined) return;
+  }
+
+  delete last[keys[i-1]];
+  return current;
+};
+
+JSONObject.prototype.del = function(){
+  return JSONObject.prototype.delele.apply(this, arguments);
 };
 
 /**

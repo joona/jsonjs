@@ -124,6 +124,39 @@ describe('jsonjs module', function(){
         expect(json.get().a.b[0].arr[0]).toEqual('a');
       });
     });
+
+    describe('#delete', function(){
+      it('should throw given no arguments', function(){
+        expect(function(){
+          json.object().delete();
+        }).toThrow();
+      });
+
+      it('should return value and delete property', function(){
+        var json = jsonjs.decorate({
+          foo: { a: 1 }
+        });
+
+        var value = json.delete('foo');
+        expect(value).toBeDefined();
+        expect(value).toEqual({ a: 1 });
+        expect(json.get('foo')).toBeUndefined();
+        expect(json.get('foo', 'a')).toBeUndefined();
+        expect(json.object().foo).toBeUndefined();
+      });
+
+      it('should return value and delete property for nested key', function(){
+        var json = jsonjs.decorate({
+          foo: { a: 1 }
+        });
+
+        var value = json.delete('foo', 'a');
+        expect(value).toBeDefined();
+        expect(value).toEqual(1);
+        expect(json.get('foo', 'a')).toBeUndefined();
+        expect(json.object().foo.a).toBeUndefined();
+      })
+    });
     
     describe('#getOrCreateObject', function(){
       it('should return existing object', function(){
