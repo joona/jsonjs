@@ -110,7 +110,7 @@ JSONObject.prototype.get = function() {
   }
   
   if(keys.length < 1) {
-    return this.data;
+    return this.object();
   }
 
   var i;
@@ -209,7 +209,7 @@ JSONObject.prototype.del = function(){
  * @returns {object}
  */
 JSONObject.prototype.object = function(){
-  return this.get();
+  return this.data;
 };
 
 /**
