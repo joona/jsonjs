@@ -377,6 +377,17 @@ describe('jsonjs module', function(){
           expect(blank.foo).toEqual('foobaa');
           expect(blank.xyz).toBe(1);
         });
+
+        it('should extend empy object with one object and keep arrays as arrays', function(){
+          var blank = {};
+
+          jsonjs.utils.extend(blank, {
+            arr: [1,2,3]
+          });
+
+          expect(blank.arr).toEqual(jasmine.any(Array));
+          expect(blank.arr).toEqual([1, 2, 3]);
+        });
       });
     })
   });

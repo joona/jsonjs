@@ -51,7 +51,11 @@ function deepMerge(one, another) {
   }
 
   if(one == null && typeof another === 'object') {
-    one = {};
+    if(Array.isArray(another)) {
+      one = [];
+    } else {
+      one = {};
+    }
   }
 
   var cloned = deepClone(another);
