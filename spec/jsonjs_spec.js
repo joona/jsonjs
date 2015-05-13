@@ -377,6 +377,115 @@ describe('jsonjs module', function(){
       });
     });
 
+    describe('convenience methods', function() {
+      var json;
+
+      beforeEach(function(){
+        json = jsonjs.decorate({
+          str: 'foobaa',
+          noone: undefined,
+          int: 1,
+          floaty: 1.1,
+          arr: [],
+          obj: { foo: 'baa' }
+        });
+      });
+
+      describe('#getString', function() {
+        it('should return string', function(){
+          expect(json.getString('str')).toEqual(jasmine.any(String));
+          expect(json.getString('str')).toEqual('foobaa');
+        });
+
+        it('should throw if value is not a string', function(){
+          expect(function() { json.getString('noone') }).toThrow();
+          expect(function() { json.getString('int') }).toThrow();
+          expect(function() { json.getString('floaty') }).toThrow();
+          expect(function() { json.getString('arr') }).toThrow();
+          expect(function() { json.getString('obj') }).toThrow();
+        });
+      });
+
+      describe('#getInt', function() {
+        it('should return integer', function(){
+          expect(json.getInt('int')).toEqual(jasmine.any(Number));
+          expect(json.getInt('int')).toEqual(json.data.int);
+          expect(json.getInt('int') % 1).toEqual(0);
+        });
+
+        it('should throw if value is not a int', function(){
+          expect(function() { json.getInt('str') }).toThrow();
+          expect(function() { json.getInt('noone') }).toThrow();
+          expect(function() { json.getInt('floaty') }).toThrow();
+          expect(function() { json.getInt('arr') }).toThrow();
+          expect(function() { json.getInt('obj') }).toThrow();
+        });
+      });
+
+      describe('#getFloat', function() {
+        it('should return float', function(){
+          expect(json.getFloat('floaty')).toEqual(jasmine.any(Number));
+          expect(json.getFloat('floaty')).toEqual(json.data.floaty);
+          expect(json.getFloat('floaty') % 1).not.toEqual(0);
+          expect(json.getFloat('int')).toEqual(1.0);
+          expect(json.getFloat('int') % 1).toEqual(0);
+        });
+
+        it('should throw if value is not a float', function(){
+          expect(function() { json.getFloat('str') }).toThrow();
+          expect(function() { json.getFloat('noone') }).toThrow();
+          expect(function() { json.getFloat('arr') }).toThrow();
+          expect(function() { json.getFloat('obj') }).toThrow();
+        });
+      });
+
+      describe('#getObject', function() {
+        it('should return an object', function(){
+          expect(json.getObject('obj')).toEqual(jasmine.any(Object));
+          expect(json.getObject('obj')).not.toEqual(jasmine.any(Array));
+          expect(json.getObject('obj')).not.toEqual(jasmine.any(jsonjs.JSONObject));
+        });
+
+        it('should throw if value is not an object', function(){
+          expect(function() { json.getObject('str') }).toThrow();
+          expect(function() { json.getObject('int') }).toThrow();
+          expect(function() { json.getObject('floaty') }).toThrow();
+          expect(function() { json.getObject('noone') }).toThrow();
+          expect(function() { json.getObject('arr') }).toThrow();
+        });
+      });
+
+      describe('#getArray', function() {
+        it('should return an array', function(){
+          expect(json.getArray('arr')).toEqual(jasmine.any(Object));
+          expect(json.getArray('arr')).toEqual(jasmine.any(Array));
+          expect(json.getArray('arr')).not.toEqual(jasmine.any(jsonjs.JSONArray));
+        });
+
+        it('should throw if value is not an array', function(){
+          expect(function() { json.getArray('str') }).toThrow();
+          expect(function() { json.getArray('int') }).toThrow();
+          expect(function() { json.getArray('floaty') }).toThrow();
+          expect(function() { json.getArray('noone') }).toThrow();
+          expect(function() { json.getArray('obj') }).toThrow();
+        });
+      });
+
+      describe('#getDecoratedObject', function() {
+        it('should return a decorated object', function(){
+          expect(json.getDecoratedObject('obj')).toEqual(jasmine.any(Object));
+          expect(json.getDecoratedObject('obj')).toEqual(jasmine.any(jsonjs.JSONObject));
+        });
+      });
+
+      describe('#getDecoratedArray', function() {
+        it('should return a decorated array', function(){
+          expect(json.getDecoratedArray('arr')).not.toEqual(jasmine.any(Array));
+          expect(json.getDecoratedArray('arr')).toEqual(jasmine.any(jsonjs.JSONArray));
+        });
+      });
+    });
+
     describe('utils', function(){
       describe('#deepMerge', function(){
         var original;

@@ -134,6 +134,105 @@ JSONObject.prototype.dget = function(){
 };
 
 /**
+ * Get a object from decorated object
+ * @param {...*|*[]} key
+ * @returns {Object||{}}
+ */
+JSONObject.prototype.getObject = function(){
+  var value = this.get.apply(this, arguments);
+
+  if(typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("value is not an object");
+  }
+
+  return value;
+};
+
+/**
+ * Get a array from decorated object
+ * @param {...*|*[]} key
+ * @returns {Array}
+ */
+JSONObject.prototype.getArray = function(){
+  var value = this.get.apply(this, arguments);
+
+  if(typeof value !== "object" || !Array.isArray(value)) {
+    throw new Error("value is not an array");
+  }
+
+  return value;
+};
+
+/**
+ * Get a string from decorated object
+ * @param {...*|*[]} key
+ * @returns {String}
+ */
+JSONObject.prototype.getString = function(){
+  var value = this.get.apply(this, arguments);
+
+  if(typeof value !== "string") {
+    throw new Error("value is not a string");
+  }
+
+  return value;
+};
+
+/**
+ * Get a integer from decorated object
+ * @param {...*|*[]} key
+ * @returns {Number}
+ */
+JSONObject.prototype.getInt = function(){
+  var value = this.get.apply(this, arguments);
+
+  if(typeof value !== "number" && (value == Number(value))) {
+    throw new Error("value is not a number");
+  }
+
+  if(value % 1 !== 0) {
+    throw new Error("value is not a integer, but float");
+  }
+
+  return parseInt(value);
+};
+
+/**
+ * Get a float from decorated object
+ * @param {...*|*[]} key
+ * @returns {Number}
+ */
+JSONObject.prototype.getFloat = function(){
+  var value = this.get.apply(this, arguments);
+
+  if(!value || !(typeof value === "number") || (value !== Number(value))) {
+    throw new Error("value is not a number");
+  }
+
+  return parseFloat(value);
+};
+
+/**
+ * Get a decorated JSONObject from decorated object
+ * @param {...*|*[]} key
+ * @returns {JSONObject}
+ */
+JSONObject.prototype.getDecoratedObject = function(){
+  var value = this.getObject.apply(this, arguments);
+  return new JSONObject(value);
+};
+
+/**
+ * Get a decorated JSONArray from decorated object
+ * @param {...*|*[]} key
+ * @returns {JSONArray}
+ */
+JSONObject.prototype.getDecoratedArray = function(){
+  var value = this.getArray.apply(this, arguments);
+  return new JSONArray(value);
+};
+
+/**
  * Update a value inside the decorated object
  * @param {...*|*[]} key
  * @param value
