@@ -443,7 +443,10 @@ describe('usage example', function(){
   it('should pass', function(){
     var obj = jsonjs.decorate({
       foo: 'baa',
-      arr: []
+      arr: [],
+      items: [
+        { foo: "foobaa" }
+      ]
     });
     
     expect(obj.get('foo')).toEqual('baa');
@@ -482,5 +485,15 @@ describe('usage example', function(){
     var originalObjectClone = obj.clone();
     expect(originalObjectClone).not.toBe(obj.object());
     expect(originalObjectClone).toEqual(obj.object());
+
+    var decoratedArray = obj.getOrCreateDecoratedArray('items');
+    expect(decoratedArray.get(0).foo).toEqual('foobaa');
+
+    var item = decoratedArray.getObject(0);
+    item.put('foo', 'baa');
+    expect(item.get('foo')).toEqual('baa');
+    expect(decoratedArray.get(0).foo).toEqual('baa');
+    expect(obj.get('items', 0, 'foo')).toEqual('baa');
+
   });
 });
