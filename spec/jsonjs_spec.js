@@ -48,6 +48,52 @@ describe('jsonjs module', function(){
       expect(json.get('foo')).toEqual('f00baa');
     });
   });
+
+  describe('#array', function() {
+    it('should return JSONArray', function(){
+      var arr = jsonjs.array();
+      expect(arr).toEqual(jasmine.any(jsonjs.JSONArray));
+      expect(arr instanceof jsonjs.JSONArray).toBeTruthy();
+      expect(arr.arr).toEqual(jasmine.any(Array));
+    });
+  });
+
+  describe('JSONArray', function(){
+    describe('#array', function(){
+      it('should return original array', function(){
+        var arr = jsonjs.decorate([
+          {
+            foo: 34
+          }
+        ]);
+
+        expect(arr.array()).toEqual(jasmine.any(Array));
+        expect(arr.array()).not.toEqual(jasmine.any(jsonjs.JSONArray));
+        expect(arr.array()[0]).toEqual(jasmine.any(Object));
+        expect(arr.array()[0]).not.toEqual(jasmine.any(jsonjs.JSONObject));
+
+        expect(arr.get()[0]).toEqual(jasmine.any(Object));
+        expect(arr.get()[0]).toEqual(arr.get(0));
+        expect(arr.get()[0]).not.toEqual(jasmine.any(jsonjs.JSONObject));
+      });
+    });
+
+    describe('#objects', function(){
+      it('should return array with decorated JSONObjects', function(){
+        var arr = jsonjs.decorate([
+          {
+            foo: 34
+          }
+        ]);
+
+        expect(arr.objects()[0]).toEqual(jasmine.any(jsonjs.JSONObject));
+        expect(arr.objects()[0].get('foo')).toEqual(34);
+        expect(arr.objects()[0]).toEqual(arr.getObject(0));
+        expect(arr.getObject(0).get('foo')).toEqual(34);
+      });
+    });
+
+  });
   
   describe('JSONObject', function(){
     describe('#get', function(){

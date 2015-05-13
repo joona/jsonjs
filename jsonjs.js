@@ -301,6 +301,58 @@ JSONObject.prototype.getOrCreateArray = function(){
   }
 };
 
+/**
+ * Get an decorated JSONArray with given keys or create new
+ * @returns {JSONArray}
+ * @throws {TypeError} if value is not an array
+ */
+JSONObject.prototype.getOrCreateDecoratedArray = function(){
+  var arr = this.getOrCreateArray.apply(this, arguments);
+  return new JSONArray(arr);
+};
+
+
+/**
+ * Return decorate JSONArray
+ * @param arr
+ * @constructor
+ */
+function JSONArray(arr) {
+  this.arr = arr || [];
+};
+
+/**
+ * Return return original array
+ * @returns {Array|[]}
+ */
+JSONArray.prototype.array = function(){
+  return this.arr;
+};
+
+JSONArray.prototype.get = function(idx){
+  var arr = this.arr;
+  if(idx !== undefined) {
+    return arr[idx];
+  }
+  return this.arr;
+};
+
+JSONArray.prototype.getObject = function(idx){
+  var raw = this.get(idx);
+  return new JSONObject(raw);
+};
+
+/**
+ * Return array containing decorated JSONObjects
+ * @returns {Array}
+ */
+JSONArray.prototype.objects = function(){
+  return this.arr.map(function(item){
+    return new JSONObject(item);
+  });
+};
+
+
 module.exports = {
   /**
    * Clone given object and decorate it
@@ -317,6 +369,9 @@ module.exports = {
    * @returns {JSONObject}
    */
   decorate: function(object){
+    if(Array.isArray(object)) {
+      return new JSONArray(object);
+    }
     return new JSONObject(object);
   },
 
@@ -327,8 +382,17 @@ module.exports = {
   object: function(){
     return new JSONObject();
   },
+
+  /**
+   * Return empty decorated array
+   * @returns {JSONArray}
+   */
+  array: function(){
+    return new JSONArray();
+  },
   
   JSONObject: JSONObject,
+  JSONArray: JSONArray,
   
   utils: {
     clone: clone,
