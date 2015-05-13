@@ -55,6 +55,14 @@ expect(decoratedCopy.object()).toEqual(obj.object());
 var originalObjectClone = obj.clone();
 expect(originalObjectClone).not.toBe(obj.object());
 expect(originalObjectClone).toEqual(obj.object());
+
+var decoratedArray = obj.getOrCreateDecoratedArray('items');
+expect(decoratedArray.get(0).foo).toEqual('foobaa');
+var item = decoratedArray.getObject(0);
+item.put('foo', 'baa');
+expect(item.get('foo')).toEqual('baa');
+expect(decoratedArray.get(0).foo).toEqual('baa');
+expect(obj.get('items', 0, 'foo')).toEqual('baa');
 ```
 
 Check [tests](https://github.com/Inbot/jsonjs/blob/master/spec/jsonjs_spec.js) for more examples.

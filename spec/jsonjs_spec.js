@@ -488,7 +488,6 @@ describe('usage example', function(){
 
     var decoratedArray = obj.getOrCreateDecoratedArray('items');
     expect(decoratedArray.get(0).foo).toEqual('foobaa');
-
     var item = decoratedArray.getObject(0);
     item.put('foo', 'baa');
     expect(item.get('foo')).toEqual('baa');
