@@ -281,6 +281,17 @@ JSONObject.prototype.getOrCreateObject = function(){
 };
 
 /**
+ * Get an decorated JSONObject with given keys or initialize and return empty JSONObject
+ * @param {(...string|string[])} key
+ * @returns {JSONObject|{}}
+ * @throws {TypeError} if value is not an object
+ */
+JSONObject.prototype.getOrCreateDecoratedObject = function(){
+  var obj = this.getOrCreateObject.apply(this, arguments);
+  return new JSONObject(obj);
+};
+
+/**
  * Get an array with given keys or initialize and return empty array
  * @returns {Array|[]}
  * @throws {TypeError} if value is not an array
@@ -329,6 +340,11 @@ JSONArray.prototype.array = function(){
   return this.arr;
 };
 
+/**
+ * Return original array or item in given index
+ * @param [idx]
+ * @returns {*}
+ */
 JSONArray.prototype.get = function(idx){
   var arr = this.arr;
   if(idx !== undefined) {
@@ -337,6 +353,11 @@ JSONArray.prototype.get = function(idx){
   return this.arr;
 };
 
+/**
+ * Return decorated JSONObject from given index
+ * @param idx
+ * @returns {JSONObject}
+ */
 JSONArray.prototype.getObject = function(idx){
   var raw = this.get(idx);
   return new JSONObject(raw);

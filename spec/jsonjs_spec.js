@@ -92,7 +92,6 @@ describe('jsonjs module', function(){
         expect(arr.getObject(0).get('foo')).toEqual(34);
       });
     });
-
   });
   
   describe('JSONObject', function(){
@@ -261,6 +260,21 @@ describe('jsonjs module', function(){
         var json = jsonjs.decorate({ foo: [], baa: 'foo' });
         expect(function(){ json.getOrCreateObject('foo') }).toThrow();
         expect(function(){ json.getOrCreateObject('baa') }).toThrow();
+      });
+    });
+
+    describe('#getOrCreateDecoratedObject', function() {
+      it('should return existing decorated object', function() {
+        var json = jsonjs.decorate({
+          foo: {a: 1}
+        });
+
+        var value = json.getOrCreateDecoratedObject('foo');
+        expect(value).toBeDefined();
+        expect(value).toEqual(jasmine.any(Object));
+        expect(value).toEqual(jasmine.any(jsonjs.JSONObject));
+        expect(value.data).toEqual({ a: 1 });
+        expect(value.get('a')).toEqual(1);
       });
     });
     
