@@ -205,7 +205,7 @@ JSONObject.prototype.delete = function(){
 };
 
 JSONObject.prototype.del = function(){
-  return JSONObject.prototype.delele.apply(this, arguments);
+  return JSONObject.prototype.delete.apply(this, arguments);
 };
 
 /**
