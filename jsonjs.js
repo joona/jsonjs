@@ -421,6 +421,14 @@ JSONObject.prototype.getOrCreateDecoratedArray = function(){
   return new JSONArray(arr);
 };
 
+/**
+ * Return list of keys available in decorated JSONObject
+ * @returns {Array}
+ */
+JSONObject.prototype.keys = function(){
+  return Object.keys(this.data);
+};
+
 
 /**
  * Return decorate JSONArray

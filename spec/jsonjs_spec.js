@@ -333,6 +333,15 @@ describe('jsonjs module', function(){
         expect(obj.object()).toBe(obj.data);
       });
     });
+
+    describe('#keys', function() {
+      it('should return keys from original object', function() {
+        var obj = jsonjs.decorate({ foo: 1, baa: 2, arr: [1,2] });
+        expect(obj.keys()).toEqual(jasmine.any(Array));
+        expect(obj.keys().length).toBe(3);
+        expect(obj.keys()).toContain('foo', 'baa', 'arr');
+      });
+    });
     
     describe('#deepClone', function(){
       var original;
