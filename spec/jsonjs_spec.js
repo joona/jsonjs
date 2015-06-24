@@ -15,14 +15,14 @@ describe('jsonjs module', function(){
       expect(json.get('foo')).toEqual(43);
       expect(obj.foo).toEqual(43);
     });
-    
+
     it('should create empty json object instance if no data is definied', function(){
       var json = jsonjs.decorate();
       expect(json instanceof jsonjs.JSONObject).toBeTruthy();
       expect(Object.keys(json.data).length).toBe(0);
     });
   });
-  
+
   describe('#object', function(){
     it('should create decorated object instance', function(){
       var json = jsonjs.object();
@@ -32,7 +32,7 @@ describe('jsonjs module', function(){
       expect(Object.keys(json.data).length).toBe(0);
     });
   });
-  
+
   describe('#decoratedCopy', function(){
     it('should clone the original object and decorate it', function(){
       var original = { foo: 'baa' };
@@ -93,11 +93,11 @@ describe('jsonjs module', function(){
       });
     });
   });
-  
+
   describe('JSONObject', function(){
     describe('#get', function(){
       var json;
-      
+
       beforeEach(function(){
         json = jsonjs.decorate({
           foo: 43,
@@ -107,22 +107,22 @@ describe('jsonjs module', function(){
           }
         });
       });
-      
+
       it('should return value from object', function(){
         expect(json.get('foo')).toEqual(43);
         expect(json.get('a', 'b')).toEqual(42);
       });
-      
+
       it('should return value from nested array', function(){
         expect(json.get('a', 'c', 0)).toEqual(1);
         expect(json.get('a', 'c', 1, 'two', 'three')).toEqual('four');
       });
-      
+
       it('should return undefined if requested key doesnt exist', function(){
         expect(json.get('i', 'dont', 'exist')).toBeUndefined();
       });
     });
-    
+
     describe('#put', function(){
       it('should put nested value', function(){
         var json = jsonjs.object();
@@ -130,20 +130,20 @@ describe('jsonjs module', function(){
         expect(json.get('a', 'b', 'c', 'd')).toEqual(123);
         expect(json.data.a.b.c.d).toEqual(123);
       });
-      
+
       it('should update existing value', function(){
         var json = jsonjs.object();
         json.put('a', 'b', 'c', 'd', 123);
         json.put('a', 'b', 'c', 'd', 321);
         expect(json.get('a', 'b', 'c', 'd')).toEqual(321);
       });
-      
+
       it('should put value to array', function(){
         var json = jsonjs.decorate({ arr: ['a', 'b'] });
         json.put('arr', 0, 'x');
         expect(json.get('arr', 0)).toEqual('x');
       });
-      
+
       it('should work with complex nested structures', function(){
         var json = jsonjs.decorate({
           a: {
@@ -156,10 +156,10 @@ describe('jsonjs module', function(){
                title: 'baa',
                arr: []
              }
-           ] 
+           ]
           }
         });
-        
+
         expect(json.put('a', 'b', 0, 'title', 'foobaa'));
         expect(json.get('a', 'b', 0, 'title')).toEqual('foobaa');
         expect(json.get().a.b[0].title).toEqual('foobaa');
@@ -202,13 +202,13 @@ describe('jsonjs module', function(){
         expect(json.object().foo.a).toBeUndefined();
       })
     });
-    
+
     describe('#getOrCreateObject', function(){
       it('should return existing object', function(){
         var json = jsonjs.decorate({
           foo: { a: 1 }
         });
-        
+
         var value = json.getOrCreateObject('foo');
         expect(value).toBeDefined();
         expect(value).toEqual(jasmine.any(Object));
@@ -217,7 +217,7 @@ describe('jsonjs module', function(){
         expect(json.get('foo')).toEqual({ a: 1 });
         expect(json.get('foo', 'a')).toEqual(1);
       });
-      
+
       it('should create new object given non existing value', function(){
         var json = jsonjs.decorate({
           foo: { a: 1 }
@@ -227,12 +227,27 @@ describe('jsonjs module', function(){
         expect(value).toEqual(jasmine.any(Object));
         expect(value).toEqual({});
       });
-      
+
+      it('should allow passing nested keys as an array', function(){
+        var json = jsonjs.decorate({
+          foo: { a: 1 },
+          baa: { foo: { a: 2 } }
+        });
+
+        var v1 = json.getOrCreateObject(['baa', 'foo']);
+        expect(v1).toEqual(jasmine.any(Object));
+        expect(v1).toEqual({ a: 2 });
+
+        var v2 = json.getOrCreateObject(['baa', 'nonexisting']);
+        expect(v2).toEqual(jasmine.any(Object));
+        expect(v2).toEqual({});
+      });
+
       it('should reflect changes to returned value back to the original object', function(){
         var json = jsonjs.decorate({
           foo: { a: 1 }
         });
-        
+
         var value = json.getOrCreateObject('foo');
         expect(value).toEqual(jasmine.any(Object));
         expect(value).toEqual({ a: 1 });
@@ -255,7 +270,7 @@ describe('jsonjs module', function(){
         expect(json.data.baa.b).toEqual('foo');
         expect(json.get('baa', 'b')).toEqual('foo');
       });
-      
+
       it('should throw if returned value is not an object', function(){
         var json = jsonjs.decorate({ foo: [], baa: 'foo' });
         expect(function(){ json.getOrCreateObject('foo') }).toThrow();
@@ -277,7 +292,7 @@ describe('jsonjs module', function(){
         expect(value.get('a')).toEqual(1);
       });
     });
-    
+
     describe('#getOrCreateArray', function(){
       it('should return existing object', function(){
         var json = jsonjs.decorate({ foo: [1, 2] });
@@ -326,7 +341,7 @@ describe('jsonjs module', function(){
         expect(function(){ json.getOrCreateArray('baa') }).toThrow();
       });
     });
-    
+
     describe('#object', function(){
       it('should return reference to the original object', function(){
         var obj = jsonjs.decorate({ foo: 'baa' });
@@ -342,41 +357,41 @@ describe('jsonjs module', function(){
         expect(obj.keys()).toContain('foo', 'baa', 'arr');
       });
     });
-    
+
     describe('#deepClone', function(){
       var original;
-      
+
       beforeEach(function(){
         original = jsonjs.decorate({ foo: 'baa' });
       });
-      
+
       it('should return copy of internal object', function(){
         var cloned = original.deepClone();
         expect(cloned).toEqual(original.object());
         expect(cloned).not.toBe(original.object());
       });
-      
+
       it('should not modify original object when cloned object is modified', function(){
         var cloned = original.deepClone();
         cloned.foo = 'foobaa';
         expect(cloned).not.toEqual(original.object());
       });
     });
-    
+
     describe('#decoratedClone', function(){
       var original;
 
       beforeEach(function(){
         original = jsonjs.decorate({ foo: 'baa' });
       });
-      
+
       it('should return copy of JSONObject instance', function(){
         var cloned = original.decoratedClone();
         expect(cloned).toEqual(jasmine.any(jsonjs.JSONObject));
         expect(cloned.object()).toEqual(original.object());
         expect(cloned).not.toBe(original);
       });
-      
+
       it('should not modify original JSONObject when cloned instance is modified', function(){
         var cloned = original.decoratedClone();
         cloned.put('foo', 'foobaa');
@@ -580,7 +595,7 @@ describe('usage example', function(){
         { foo: "foobaa" }
       ]
     });
-    
+
     expect(obj.get('foo')).toEqual('baa');
     expect(obj.get('arr')).toEqual(jasmine.any(Array));
 
@@ -604,16 +619,16 @@ describe('usage example', function(){
     expect(arr).toEqual(jasmine.any(Array));
     expect(arr.length).toBe(0);
     expect(arr).toEqual([]);
-    
+
     arr.push('x');
     expect(arr.length).toBe(1);
     expect(arr).toEqual(['x']);
     expect(obj.get('arr')).toEqual(['x']);
-    
+
     var decoratedCopy = obj.copy();
     expect(decoratedCopy).not.toBe(obj);
     expect(decoratedCopy.object()).toEqual(obj.object());
-    
+
     var originalObjectClone = obj.clone();
     expect(originalObjectClone).not.toBe(obj.object());
     expect(originalObjectClone).toEqual(obj.object());

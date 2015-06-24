@@ -362,7 +362,13 @@ JSONObject.prototype.copy = function(){
  * @throws {TypeError} if value is not an object
  */
 JSONObject.prototype.getOrCreateObject = function(){
-  var keys = Array.prototype.slice.call(arguments);
+  var keys;
+  if(arguments[0] && Array.isArray(arguments[0])) {
+    keys = arguments[0];
+  } else {
+    keys = Array.prototype.slice.call(arguments);
+  }
+
   var value = this.get(keys);
   
   if(!value) {
@@ -396,7 +402,13 @@ JSONObject.prototype.getOrCreateDecoratedObject = function(){
  * @throws {TypeError} if value is not an array
  */
 JSONObject.prototype.getOrCreateArray = function(){
-  var keys = Array.prototype.slice.call(arguments);
+  var keys;
+  if(arguments[0] && Array.isArray(arguments[0])) {
+    keys = arguments[0];
+  } else {
+    keys = Array.prototype.slice.call(arguments);
+  }
+
   var value = this.get(keys);
 
   if(!value) {
@@ -428,7 +440,6 @@ JSONObject.prototype.getOrCreateDecoratedArray = function(){
 JSONObject.prototype.keys = function(){
   return Object.keys(this.data);
 };
-
 
 /**
  * Return decorate JSONArray
