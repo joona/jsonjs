@@ -434,13 +434,13 @@ describe('jsonjs module', function(){
         it('should return integer', function(){
           expect(json.getInt('int')).toEqual(jasmine.any(Number));
           expect(json.getInt('int')).toEqual(json.data.int);
+          expect(json.getInt('floaty')).toEqual(parseInt(json.data.floaty));
           expect(json.getInt('int') % 1).toEqual(0);
         });
 
         it('should throw if value is not a int', function(){
           expect(function() { json.getInt('str') }).toThrow();
           expect(function() { json.getInt('noone') }).toThrow();
-          expect(function() { json.getInt('floaty') }).toThrow();
           expect(function() { json.getInt('arr') }).toThrow();
           expect(function() { json.getInt('obj') }).toThrow();
         });
@@ -511,6 +511,64 @@ describe('jsonjs module', function(){
     });
 
     describe('utils', function(){
+      describe('#isType', function() {
+        it('should detect object', function() {
+          expect(jsonjs.utils.isType({}, 'object')).toBe(true);
+          expect(jsonjs.utils.isType([], 'object')).toBe(false);
+        });
+
+        it('should detect arrays', function() {
+          expect(jsonjs.utils.isType({}, 'array')).toBe(false);
+          expect(jsonjs.utils.isType([], 'array')).toBe(true);
+        });
+
+        it('should detect strings', function() {
+          expect(jsonjs.utils.isType('foo', 'string')).toBe(true);
+          expect(jsonjs.utils.isType('1.1', 'string')).toBe(true);
+          expect(jsonjs.utils.isType('', 'string')).toBe(true);
+          expect(jsonjs.utils.isType('1', 'string')).toBe(true);
+          expect(jsonjs.utils.isType(1, 'string')).toBe(false);
+          expect(jsonjs.utils.isType([], 'string')).toBe(false);
+          expect(jsonjs.utils.isType({}, 'string')).toBe(false);
+          expect(jsonjs.utils.isType(null, 'string')).toBe(false);
+          expect(jsonjs.utils.isType(undefined, 'string')).toBe(false);
+        });
+
+        it('should detect numbers', function() {
+          expect(jsonjs.utils.isType(1, 'number')).toBe(true);
+          expect(jsonjs.utils.isType(1.1, 'number')).toBe(true);
+          expect(jsonjs.utils.isType('1', 'number')).toBe(true);
+          expect(jsonjs.utils.isType('1.0', 'number')).toBe(true);
+          expect(jsonjs.utils.isType('1.1', 'number')).toBe(true);
+          expect(jsonjs.utils.isType('1.1a', 'number')).toBe(false);
+          expect(jsonjs.utils.isType(null, 'number')).toBe(false);
+        });
+
+        it('should detect ints', function() {
+          expect(jsonjs.utils.isType(1, 'int')).toBe(true);
+          expect(jsonjs.utils.isType(1.1, 'int')).toBe(false);
+          expect(jsonjs.utils.isType(1.0, 'int')).toBe(true);
+          expect(jsonjs.utils.isType('1', 'int')).toBe(true);
+          expect(jsonjs.utils.isType('1.0', 'int')).toBe(true);
+          expect(jsonjs.utils.isType('1.1', 'int')).toBe(false);
+          expect(jsonjs.utils.isType('', 'int')).toBe(false);
+          expect(jsonjs.utils.isType([], 'int')).toBe(false);
+          expect(jsonjs.utils.isType({}, 'int')).toBe(false);
+        })
+
+        it('should detect floats', function() {
+          expect(jsonjs.utils.isType(1, 'float')).toBe(true);
+          expect(jsonjs.utils.isType(1.1, 'float')).toBe(true);
+          expect(jsonjs.utils.isType(1.0, 'float')).toBe(true);
+          expect(jsonjs.utils.isType('1', 'float')).toBe(true);
+          expect(jsonjs.utils.isType('1.0', 'float')).toBe(true);
+          expect(jsonjs.utils.isType('1.1', 'float')).toBe(true);
+          expect(jsonjs.utils.isType('', 'float')).toBe(false);
+          expect(jsonjs.utils.isType([], 'int')).toBe(false);
+          expect(jsonjs.utils.isType({}, 'int')).toBe(false);
+        });
+      });
+
       describe('#deepMerge', function(){
         var original;
 

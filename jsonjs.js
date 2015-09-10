@@ -79,6 +79,55 @@ function extend(){
   return original;
 }
 
+function isType(primitive, type) {
+  var rval = false;
+
+  switch(type) {
+    case 'array':
+      if(typeof primitive == "object" && Array.isArray(primitive)) {
+        rval = true;
+      }
+      break;
+    case 'object':
+      if(typeof primitive == "object" && !Array.isArray(primitive)) {
+        rval = true;
+      }
+      break;
+    case 'string':
+      if(typeof primitive == "string") {
+        rval = true;
+      }
+      break;
+    case 'number':
+      if(typeof primitive == "number") {
+        rval = true;
+      } else if(typeof primitive === "string"){
+        if (primitive === Number(primitive).toString()) {
+          rval = true;
+        } else if(!isNaN(parseInt(primitive)) && Number(primitive) === parseInt(primitive)) {
+          rval = true;
+        }
+      }
+      break;
+    case 'int':
+      if(isType(primitive, 'number') && Number(primitive) % 1 == 0) {
+        rval = true;
+      }
+      break;
+    case 'float':
+      if(isType(primitive, 'number')) {
+        if(isType(primitive, 'int')) {
+          rval = true;
+        } else if(Number(primitive) % 1 !== 0) {
+          rval = true;
+        }
+      }
+      break;
+  }
+
+  return rval;
+}
+
 /**
  * 
  * @param {object} [data]
@@ -141,7 +190,7 @@ JSONObject.prototype.dget = function(){
 JSONObject.prototype.getObject = function(){
   var value = this.get.apply(this, arguments);
 
-  if(typeof value !== "object" || Array.isArray(value)) {
+  if(!isType(value, 'object')) {
     throw new Error("value is not an object");
   }
 
@@ -156,7 +205,7 @@ JSONObject.prototype.getObject = function(){
 JSONObject.prototype.getArray = function(){
   var value = this.get.apply(this, arguments);
 
-  if(typeof value !== "object" || !Array.isArray(value)) {
+  if(!isType(value, 'array')) {
     throw new Error("value is not an array");
   }
 
@@ -171,7 +220,7 @@ JSONObject.prototype.getArray = function(){
 JSONObject.prototype.getString = function(){
   var value = this.get.apply(this, arguments);
 
-  if(typeof value !== "string") {
+  if(!isType(value, 'string')) {
     throw new Error("value is not a string");
   }
 
@@ -186,12 +235,8 @@ JSONObject.prototype.getString = function(){
 JSONObject.prototype.getInt = function(){
   var value = this.get.apply(this, arguments);
 
-  if(typeof value !== "number" && (value == Number(value))) {
+  if(!isType(value, 'number')) {
     throw new Error("value is not a number");
-  }
-
-  if(value % 1 !== 0) {
-    throw new Error("value is not a integer, but float");
   }
 
   return parseInt(value);
@@ -205,7 +250,7 @@ JSONObject.prototype.getInt = function(){
 JSONObject.prototype.getFloat = function(){
   var value = this.get.apply(this, arguments);
 
-  if(!value || !(typeof value === "number") || (value !== Number(value))) {
+  if(!isType(value, 'number')) {
     throw new Error("value is not a number");
   }
 
@@ -529,14 +574,23 @@ module.exports = {
   array: function(){
     return new JSONArray();
   },
+
+  /**
+   * Check primitive type
+   * @param primitive
+   * @param {string} type -- array|object|string|number|int|float
+   * @returns {boolean}
+   */
+  is: isType,
   
   JSONObject: JSONObject,
   JSONArray: JSONArray,
-  
+
   utils: {
     clone: clone,
     deepClone: deepClone,
     deepMerge: deepMerge,
-    extend: extend
+    extend: extend,
+    isType: isType
   }
 };
