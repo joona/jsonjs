@@ -699,5 +699,10 @@ describe('usage example', function(){
     expect(decoratedArray.get(0).foo).toEqual('baa');
     expect(obj.get('items', 0, 'foo')).toEqual('baa');
 
+    decoratedArray = obj.getOrCreateDecoratedArray('numbers');
+    expect(decoratedArray.array().length).toEqual(0);
+    decoratedArray.push('foo');
+    expect(decoratedArray.array().length).toEqual(1);
+    expect(decoratedArray.get(0)).toEqual('foo');
   });
 });

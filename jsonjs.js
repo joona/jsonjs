@@ -536,6 +536,15 @@ JSONArray.prototype.objects = function(){
   });
 };
 
+/**
+ * Push item to JSONArray. Returns index of the item.
+ * @param item
+ * @returns {int}
+ */
+JSONArray.prototype.push = function(item){
+  return this.arr.push(item);
+};
+
 
 module.exports = {
   /**
