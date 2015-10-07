@@ -89,6 +89,13 @@ function keysFromArguments() {
   return keys;
 }
 
+function isTypeStrict(primitive, type, name) {
+  var rval = isType(primitive, type);
+  if(!rval) {
+    throw new Error('jsonjs validation error: ' + (name ? name : 'primitive') + ' is not a(n)' + type);
+  }
+}
+
 function isType(primitive, type) {
   var rval = false;
 
@@ -213,11 +220,7 @@ JSONObject.prototype.dget = function(){
  */
 JSONObject.prototype.getObject = function(){
   var value = this.get.apply(this, arguments);
-
-  if(!isType(value, 'object')) {
-    throw new Error("value is not an object");
-  }
-
+  isTypeStrict(value, 'object', 'value');
   return value;
 };
 
@@ -228,11 +231,7 @@ JSONObject.prototype.getObject = function(){
  */
 JSONObject.prototype.getArray = function(){
   var value = this.get.apply(this, arguments);
-
-  if(!isType(value, 'array')) {
-    throw new Error("value is not an array");
-  }
-
+  isTypeStrict(value, 'array', 'value');
   return value;
 };
 
@@ -243,11 +242,7 @@ JSONObject.prototype.getArray = function(){
  */
 JSONObject.prototype.getString = function(){
   var value = this.get.apply(this, arguments);
-
-  if(!isType(value, 'string')) {
-    throw new Error("value is not a string");
-  }
-
+  isTypeStrict(value, 'string', 'value');
   return value;
 };
 
@@ -258,11 +253,7 @@ JSONObject.prototype.getString = function(){
  */
 JSONObject.prototype.getInt = function(){
   var value = this.get.apply(this, arguments);
-
-  if(!isType(value, 'number')) {
-    throw new Error("value is not a number");
-  }
-
+  isTypeStrict(value, 'number', 'value');
   return parseInt(value);
 };
 
@@ -273,11 +264,7 @@ JSONObject.prototype.getInt = function(){
  */
 JSONObject.prototype.getFloat = function(){
   var value = this.get.apply(this, arguments);
-
-  if(!isType(value, 'number')) {
-    throw new Error("value is not a number");
-  }
-
+  isTypeStrict(value, 'number', 'value');
   return parseFloat(value);
 };
 
@@ -548,7 +535,10 @@ JSONArray.prototype.push = function(item){
   return this.arr.push(item);
 };
 
-
+/**
+ *
+ * @type {{decoratedCopy: module.exports.decoratedCopy, decorate: module.exports.decorate, object: module.exports.object, array: module.exports.array, is: isType, isStrict: *, JSONObject: JSONObject, JSONArray: JSONArray, utils: {clone: clone, deepClone: deepClone, deepMerge: deepMerge, extend: extend, isType: isType}}}
+ */
 module.exports = {
   /**
    * Clone given object and decorate it
@@ -594,6 +584,15 @@ module.exports = {
    * @returns {boolean}
    */
   is: isType,
+
+  /**
+   * Check primitive type or throw
+   * @param primitive
+   * @param {string} type -- array|object|string|number|int|float
+   * @param {string} [name] primitive name
+   * @throws {Error}
+   */
+  isStrictly: isTypeStrict(),
 
   JSONObject: JSONObject,
   JSONArray: JSONArray,
