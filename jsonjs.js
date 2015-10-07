@@ -79,6 +79,16 @@ function extend(){
   return original;
 }
 
+function keysFromArguments() {
+  var keys = [];
+  if(arguments[0] && isType(arguments[0], 'array')) {
+    keys = arguments[0];
+  } else {
+    keys = Array.prototype.slice.call(arguments);
+  }
+  return keys;
+}
+
 function isType(primitive, type) {
   var rval = false;
 
@@ -129,7 +139,7 @@ function isType(primitive, type) {
 }
 
 /**
- * 
+ *
  * @param {object} [data]
  * @param {boolean} [clone=false] - The original object will be cloned if true.
  * @returns {JSONObject}
@@ -139,13 +149,33 @@ function JSONObject(data, clone){
   if(data instanceof JSONObject) {
     return data;
   }
-  
+
   if(typeof data === "object" && clone) {
     data = deepClone(data);
   }
-  
+
   this.data = data || {};
   return this;
+}
+
+/**
+ * Check if key has a value
+ * @param {...String|String[]} key
+ * @returns {boolean}
+ */
+JSONObject.prototype.has = function() {
+  var keys = keysFromArguments.apply(this, arguments), current = this.data;
+
+  if(keys.length < 1) {
+    return true;
+  }
+
+  var value = this.get(keys);
+  if(value !== undefined) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -154,14 +184,8 @@ function JSONObject(data, clone){
  * @returns {*|{}}
  */
 JSONObject.prototype.get = function() {
-  var keys, current = this.data;
-  
-  if(arguments[0] && Array.isArray(arguments[0])) {
-    keys = arguments[0];
-  } else {
-    keys = Array.prototype.slice.call(arguments);
-  }
-  
+  var keys = keysFromArguments.apply(this, arguments), current = this.data;
+
   if(keys.length < 1) {
     return this.object();
   }
@@ -171,7 +195,7 @@ JSONObject.prototype.get = function() {
     current = current[keys[i]];
     if(current === undefined) return;
   }
-  
+
   return current;
 };
 
@@ -285,19 +309,14 @@ JSONObject.prototype.getDecoratedArray = function(){
  */
 JSONObject.prototype.put = function(key, value) {
   var keys, current = this.data;
-  
+
   if(arguments.length < 2) {
     throw new Error("put needs at least 2 arguments");
   }
-  
-  value = arguments[arguments.length - 1];
-  
-  if(arguments[0] && Array.isArray(arguments[0])) {
-    keys = arguments[0];
-  } else {
-    keys = Array.prototype.slice.call(arguments);
-    keys.pop();
-  }
+
+  var args = Array.prototype.slice.call(arguments);
+  value = args.pop();
+  keys = keysFromArguments.apply(this, args);
 
   var i, k;
   for (i = 0; i < keys.length; i++){
@@ -305,11 +324,11 @@ JSONObject.prototype.put = function(key, value) {
     if(current[k] === undefined) {
       current[k] = {};
     }
-    
+
     if((keys.length - 1) == i) {
       current[k] = value;
     }
-    
+
     current = current[k];
   }
 
@@ -331,11 +350,7 @@ JSONObject.prototype.delete = function(){
     throw new Error("delete needs at least 1 arguments");
   }
 
-  if(arguments[0] && Array.isArray(arguments[0])) {
-    keys = arguments[0];
-  } else {
-    keys = Array.prototype.slice.call(arguments);
-  }
+  keys = keysFromArguments.apply(this, arguments);
 
   var i, last;
   for (i = 0; i < keys.length; i++){
@@ -407,15 +422,9 @@ JSONObject.prototype.copy = function(){
  * @throws {TypeError} if value is not an object
  */
 JSONObject.prototype.getOrCreateObject = function(){
-  var keys;
-  if(arguments[0] && Array.isArray(arguments[0])) {
-    keys = arguments[0];
-  } else {
-    keys = Array.prototype.slice.call(arguments);
-  }
-
+  var keys = keysFromArguments.apply(this, arguments);
   var value = this.get(keys);
-  
+
   if(!value) {
     this.put(keys, {});
     return this.get(keys);
@@ -447,13 +456,7 @@ JSONObject.prototype.getOrCreateDecoratedObject = function(){
  * @throws {TypeError} if value is not an array
  */
 JSONObject.prototype.getOrCreateArray = function(){
-  var keys;
-  if(arguments[0] && Array.isArray(arguments[0])) {
-    keys = arguments[0];
-  } else {
-    keys = Array.prototype.slice.call(arguments);
-  }
-
+  var keys = keysFromArguments.apply(this, arguments);
   var value = this.get(keys);
 
   if(!value) {
@@ -591,7 +594,7 @@ module.exports = {
    * @returns {boolean}
    */
   is: isType,
-  
+
   JSONObject: JSONObject,
   JSONArray: JSONArray,
 

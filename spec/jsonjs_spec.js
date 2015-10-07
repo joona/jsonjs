@@ -123,6 +123,24 @@ describe('jsonjs module', function(){
       });
     });
 
+    describe('#has', function(){
+       var json;
+
+      beforeEach(function(){
+        json = jsonjs.decorate({
+          foo: 43,
+        });
+      });
+
+      it('should return true if key has a value', function(){
+        expect(json.has('foo')).toBe(true);
+      });
+
+      it('should return false if key doesnt have value', function() {
+        expect(json.has('nonexisting')).toBe(false);
+      });
+    });
+
     describe('#put', function(){
       it('should put nested value', function(){
         var json = jsonjs.object();
