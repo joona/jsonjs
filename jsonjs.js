@@ -598,10 +598,50 @@ module.exports = {
   JSONArray: JSONArray,
 
   utils: {
+    /**
+     * Clone an object
+     * @param {object} obj
+     * @returns {object}
+     */
     clone: clone,
+
+    /**
+     * Deep clone an object
+     * @param {object} obj
+     * @returns {object}
+     */
     deepClone: deepClone,
+
+    /**
+     * Deep merge one object to another
+     * @param one
+     * @param another
+     * @returns {object}
+     */
     deepMerge: deepMerge,
+
+    /**
+     * Deep merge multiple objects. First being the base.
+     * @param {object} ...obj
+     * @returns {object}
+     */
     extend: extend,
-    isType: isType
+
+    /**
+     * Check primitive type
+     * @param primitive
+     * @param {string} type -- array|object|string|number|int|float
+     * @returns {boolean}
+     */
+    isType: isType,
+
+    /**
+     * Check primitive type or throw
+     * @param primitive
+     * @param {string} type -- array|object|string|number|int|float
+     * @param {string} [name] primitive name
+     * @throws {Error}
+     */
+    isTypeStrict: isTypeStrict
   }
 };
