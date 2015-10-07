@@ -535,15 +535,12 @@ JSONArray.prototype.push = function(item){
   return this.arr.push(item);
 };
 
-/**
- *
- * @type {{decoratedCopy: module.exports.decoratedCopy, decorate: module.exports.decorate, object: module.exports.object, array: module.exports.array, is: isType, isStrict: *, JSONObject: JSONObject, JSONArray: JSONArray, utils: {clone: clone, deepClone: deepClone, deepMerge: deepMerge, extend: extend, isType: isType}}}
- */
 module.exports = {
   /**
    * Clone given object and decorate it
    * @param {object} object
    * @returns {JSONObject}
+   * @static
    */
   decoratedCopy: function(object){
     return new JSONObject(object, true);
@@ -553,6 +550,7 @@ module.exports = {
    * Decorate object
    * @param {object} [object]
    * @returns {JSONObject}
+   * @static
    */
   decorate: function(object){
     if(Array.isArray(object)) {
@@ -564,6 +562,7 @@ module.exports = {
   /**
    * Return empty decorated object
    * @returns {JSONObject}
+   * @static
    */
   object: function(){
     return new JSONObject();
@@ -572,6 +571,7 @@ module.exports = {
   /**
    * Return empty decorated array
    * @returns {JSONArray}
+   * @static
    */
   array: function(){
     return new JSONArray();
@@ -582,6 +582,7 @@ module.exports = {
    * @param primitive
    * @param {string} type -- array|object|string|number|int|float
    * @returns {boolean}
+   * @static
    */
   is: isType,
 
@@ -591,24 +592,32 @@ module.exports = {
    * @param {string} type -- array|object|string|number|int|float
    * @param {string} [name] primitive name
    * @throws {Error}
+   * @static
    */
   isStrictly: isTypeStrict(),
 
   JSONObject: JSONObject,
   JSONArray: JSONArray,
 
+  /**
+   *
+   */
   utils: {
     /**
      * Clone an object
      * @param {object} obj
+     * @type {Function}
      * @returns {object}
+     * @static
      */
     clone: clone,
 
     /**
      * Deep clone an object
      * @param {object} obj
+     * @type {Function}
      * @returns {object}
+     * @static
      */
     deepClone: deepClone,
 
@@ -616,14 +625,18 @@ module.exports = {
      * Deep merge one object to another
      * @param one
      * @param another
+     * @type {Function}
      * @returns {object}
+     * @static
      */
     deepMerge: deepMerge,
 
     /**
      * Deep merge multiple objects. First being the base.
      * @param {object} ...obj
+     * @type {Function}
      * @returns {object}
+     * @static
      */
     extend: extend,
 
@@ -631,7 +644,9 @@ module.exports = {
      * Check primitive type
      * @param primitive
      * @param {string} type -- array|object|string|number|int|float
+     * @type {Function}
      * @returns {boolean}
+     * @static
      */
     isType: isType,
 
@@ -640,7 +655,9 @@ module.exports = {
      * @param primitive
      * @param {string} type -- array|object|string|number|int|float
      * @param {string} [name] primitive name
+     * @type {Function}
      * @throws {Error}
+     * @static
      */
     isTypeStrict: isTypeStrict
   }
