@@ -594,7 +594,7 @@ module.exports = {
    * @throws {Error}
    * @static
    */
-  isStrictly: isTypeStrict(),
+  isStrictly: isTypeStrict,
 
   JSONObject: JSONObject,
   JSONArray: JSONArray,

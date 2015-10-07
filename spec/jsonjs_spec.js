@@ -587,6 +587,13 @@ describe('jsonjs module', function(){
         });
       });
 
+      describe('#isTypeStrict', function(){
+        it('should validate primitive and throw if not matching', function(){
+          expect(function(){ jsonjs.utils.isTypeStrict(1, 'string') }).toThrow();
+          expect(function(){ jsonjs.utils.isTypeStrict('foo', 'string') }).not.toThrow();
+        });
+      });
+
       describe('#deepMerge', function(){
         var original;
 
