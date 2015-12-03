@@ -429,7 +429,8 @@ describe('jsonjs module', function(){
           int: 1,
           floaty: 1.1,
           arr: [],
-          obj: { foo: 'baa' }
+          obj: { foo: 'baa' },
+          truthy: true
         });
       });
 
@@ -445,6 +446,19 @@ describe('jsonjs module', function(){
           expect(function() { json.getString('floaty') }).toThrow();
           expect(function() { json.getString('arr') }).toThrow();
           expect(function() { json.getString('obj') }).toThrow();
+        });
+      });
+
+      describe('#getBoolean', function() {
+        it('should return boolean', function(){
+          expect(json.getBoolean('truthy')).toBe(true);
+        });
+
+        it('should throw if value is not a boolean', function(){
+          expect(function(){ json.getBoolean('int') }).toThrow();
+          expect(function(){ json.getBoolean('arr') }).toThrow();
+          expect(function(){ json.getBoolean('obj') }).toThrow();
+          expect(function(){ json.getBoolean('noone') }).toThrow();
         });
       });
 

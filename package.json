@@ -1,6 +1,6 @@
 {
   "name": "jsonjs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Jsonj inspired library for procesing JSON",
   "main": "jsonjs.js",
   "scripts": {

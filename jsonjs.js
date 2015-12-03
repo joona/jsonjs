@@ -140,6 +140,11 @@ function isType(primitive, type) {
         }
       }
       break;
+    case 'boolean':
+      if(typeof primitive == "boolean") {
+        rval = true;
+      }
+      break;
   }
 
   return rval;
@@ -243,6 +248,17 @@ JSONObject.prototype.getArray = function(){
 JSONObject.prototype.getString = function(){
   var value = this.get.apply(this, arguments);
   isTypeStrict(value, 'string', 'value');
+  return value;
+};
+
+/**
+ * Get a boolean from decorated object
+ * @param {...*|*[]} key
+ * @returns {Boolean}
+ */
+JSONObject.prototype.getBoolean = function(){
+  var value = this.get.apply(this, arguments);
+  isTypeStrict(value,  'boolean', 'value');
   return value;
 };
 
