@@ -188,7 +188,22 @@ JSONObject.prototype.has = function() {
   }
 
   return false;
-}
+};
+
+
+/**
+ * Check if value with key is a given type
+ * @param {...String|String[]} key
+ * @param {String} type
+ * @returns {boolean}
+ */
+JSONObject.prototype.is = function() {
+  var keys = keysFromArguments.apply(this, arguments);
+  var type = keys.pop();
+
+  var value = this.get(keys);
+  return isType(value, type);
+};
 
 /**
  * Get a value from decorated object

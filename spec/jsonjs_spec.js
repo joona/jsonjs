@@ -141,6 +141,24 @@ describe('jsonjs module', function(){
       });
     });
 
+    describe('#is', function() {
+      it('should return true if value with given keys is given type', function() {
+        var json = jsonjs.decorate({
+          str: 'string',
+          num: 43,
+          bool: true,
+          arr: [],
+          obj: {}
+        });
+
+        expect(json.is('str', 'string')).toBe(true);
+        expect(json.is('num', 'number')).toBe(true);
+        expect(json.is('bool', 'boolean')).toBe(true);
+        expect(json.is('arr', 'array')).toBe(true);
+        expect(json.is('obj', 'object')).toBe(true);
+      });
+    });
+
     describe('#put', function(){
       it('should put nested value', function(){
         var json = jsonjs.object();
