@@ -150,6 +150,18 @@ function isType(primitive, type) {
   return rval;
 }
 
+function isDecoratedObject(object) {
+  return !!(object instanceof JSONObject);
+}
+
+function isDecoratedArray(array) {
+  return !!(array instanceof JSONArray);
+}
+
+function isDecorated(object) {
+  return isDecoratedArray(object) || isDecoratedObject(object);
+}
+
 /**
  *
  * @param {object} [data]
@@ -579,11 +591,14 @@ module.exports = {
 
   /**
    * Decorate object
-   * @param {object} [object]
-   * @returns {JSONObject}
+   * @param {object|JSONObject|JSONArray} [object]
+   * @returns {JSONObject|JSONArray}
    * @static
    */
   decorate: function(object){
+    if(isDecorated(object)) {
+      return object;
+    }
     if(Array.isArray(object)) {
       return new JSONArray(object);
     }
@@ -629,6 +644,10 @@ module.exports = {
 
   JSONObject: JSONObject,
   JSONArray: JSONArray,
+
+  isDecoratedObject: isDecoratedObject,
+  isDecoratedArray: isDecoratedArray,
+  isDecorated: isDecorated,
 
   /**
    *

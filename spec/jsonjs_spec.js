@@ -3,6 +3,7 @@
 var jsonjs = require('../jsonjs');
 
 describe('jsonjs module', function(){
+
   describe('#decorate', function(){
     it('should decorate object', function(){
       var obj = { foo: 42 };
@@ -58,6 +59,31 @@ describe('jsonjs module', function(){
     });
   });
 
+  describe('#isDecoratedObject', function(){
+    it('should return true if decorated', function() {
+      var object = jsonjs.object();
+      expect(jsonjs.isDecoratedObject(object)).toEqual(true);
+      expect(jsonjs.isDecoratedObject({})).toEqual(false);
+    });
+  });
+
+  describe('#isDecoratedArray', function(){
+    it('should return true if decorated', function() {
+      var object = jsonjs.array();
+      expect(jsonjs.isDecoratedArray(object)).toEqual(true);
+      expect(jsonjs.isDecoratedArray([])).toEqual(false);
+    });
+  });
+
+  describe('#isDecorated', function(){
+    it('should return true if decorated', function() {
+      expect(jsonjs.isDecorated(jsonjs.object())).toEqual(true);
+      expect(jsonjs.isDecorated({})).toEqual(false);
+      expect(jsonjs.isDecorated(jsonjs.array())).toEqual(true);
+      expect(jsonjs.isDecorated([])).toEqual(false);
+    });
+  });
+  
   describe('JSONArray', function(){
     describe('#array', function(){
       it('should return original array', function(){
@@ -604,7 +630,7 @@ describe('jsonjs module', function(){
           expect(jsonjs.utils.isType('', 'int')).toBe(false);
           expect(jsonjs.utils.isType([], 'int')).toBe(false);
           expect(jsonjs.utils.isType({}, 'int')).toBe(false);
-        })
+        });
 
         it('should detect floats', function() {
           expect(jsonjs.utils.isType(1, 'float')).toBe(true);
