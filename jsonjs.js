@@ -578,6 +578,14 @@ JSONArray.prototype.push = function(item){
   return this.arr.push(item);
 };
 
+/**
+ * Return size of the array.
+ * @returns {int}
+ */
+JSONArray.prototype.size = function(){
+  return this.arr.length;
+}
+
 module.exports = {
   /**
    * Clone given object and decorate it

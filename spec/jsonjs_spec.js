@@ -118,6 +118,16 @@ describe('jsonjs module', function(){
         expect(arr.getObject(0).get('foo')).toEqual(34);
       });
     });
+
+    describe('#size', function(){
+      it('should return size of the array', function(){
+        var arr = jsonjs.array();
+        arr.push('a');
+        arr.push('b');
+        expect(arr.size()).toEqual(2);
+        expect(arr.size()).toEqual(arr.arr.length);
+      });
+    })
   });
 
   describe('JSONObject', function(){

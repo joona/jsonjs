@@ -1,10 +1,10 @@
 {
   "name": "jsonjs",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Jsonj inspired library for procesing JSON",
   "main": "jsonjs.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine"
+    "test": "node node_modules/jasmine/bin/jasmine.js"
   },
   "keywords": [
     "jsonjs",
