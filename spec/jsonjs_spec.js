@@ -114,8 +114,8 @@ describe('jsonjs module', function(){
 
         expect(arr.objects()[0]).toEqual(jasmine.any(jsonjs.JSONObject));
         expect(arr.objects()[0].get('foo')).toEqual(34);
-        expect(arr.objects()[0]).toEqual(arr.getObject(0));
-        expect(arr.getObject(0).get('foo')).toEqual(34);
+        expect(arr.objects()[0]).toEqual(arr.getDecoratedObject(0));
+        expect(arr.getDecoratedObject(0).get('foo')).toEqual(34);
       });
     });
 
@@ -127,7 +127,7 @@ describe('jsonjs module', function(){
         expect(arr.size()).toEqual(2);
         expect(arr.size()).toEqual(arr.arr.length);
       });
-    })
+    });
   });
 
   describe('JSONObject', function(){
@@ -214,6 +214,15 @@ describe('jsonjs module', function(){
         var json = jsonjs.decorate({ arr: ['a', 'b'] });
         json.put('arr', 0, 'x');
         expect(json.get('arr', 0)).toEqual('x');
+      });
+
+      it('should work with array in the middle', function(){
+        var json = jsonjs.decorate();
+        json.put('arr', 0, 'id', 'id-1');
+        expect(json.getArray('arr')[0]).toEqual({ id: 'id-1' });
+
+        json.put('b', 0, 1, 'a', 'x');
+        expect(json.getDecoratedObject('b', 0, 1).get('a')).toEqual('x');
       });
 
       it('should work with complex nested structures', function(){
@@ -733,7 +742,100 @@ describe('jsonjs module', function(){
           expect(blank.arr).toEqual([1, 2, 3]);
         });
       });
-    })
+
+      describe('#flatten', function(){
+        it('should flatten object', function(){
+          var v1 = jsonjs.utils.flatten({ foo: 1 });
+          expect(v1).toEqual({ foo: 1 });
+
+          var v2 = jsonjs.utils.flatten({ foo: [ 1, 2, [ 'a', 'b', 'c' ], { a: 'b' } ], baa: { b: 'c' }, arr: [{ id: 'foo-1'}]});
+          expect(v2).toEqual({
+            'foo.0': 1,
+            'foo.1': 2,
+            'foo.2.0': 'a', 
+            'foo.2.1': 'b', 
+            'foo.2.2': 'c', 
+            'foo.3.a': 'b',
+            'baa.b': 'c',
+            'arr.0.id': 'foo-1' 
+          });
+
+
+          var v3 = jsonjs.utils.flatten({ a: { b: { c: { d: { e: { f: { g: 0.12345678 }}}}}}});
+          expect(v3).toEqual({
+            'a.b.c.d.e.f.g': 0.12345678
+          });
+        });
+      });
+
+      describe('#flatten', function(){
+        it('should create deep object from paths and values', function() {
+          
+          var v1 = jsonjs.utils.unflatten({
+            'baa.0': 'a',
+            'baa.1': 'b' 
+          });
+          expect(v1.object()).toEqual({ baa: [ 'a', 'b' ]})
+
+          var v2 = jsonjs.utils.unflatten({
+            'baa.1': 'b',
+            'baa.0': 'a'
+          });
+          expect(v2.object()).toEqual({ baa: [ 'a', 'b' ]})
+
+          var v3 = jsonjs.utils.unflatten({
+            'foo.baa': 'foobaa',
+            'foo.int': 1,
+            'foo.bool': true,
+            'foo.arr.0': 1,
+            'foo.props.test': 'test',
+            'foo.props.baa': 1,
+            'baa.0.id': 'foo-1'
+          });
+
+          var v3c = {
+            foo: {
+              baa: 'foobaa',
+              int: 1,
+              bool: true,
+              arr: [1],
+              props: {
+                test: 'test',
+                baa: 1
+              }
+            },
+            baa: [
+              {
+                id: 'foo-1'
+              }
+            ]
+          };
+          expect(v3.object()).toEqual(v3c);
+        });
+
+        it('should allow custom delimiter', function(){
+          var v1 = jsonjs.utils.unflatten({
+            'FOO__BAA__KEYS__0': 1,
+            'FOO__BAA__TEST': 'test',
+            'BAA__0__ID': 'foo-1'
+          }, '__');
+
+          expect(v1.object()).toEqual({
+            'FOO': {
+              'BAA': {
+                'KEYS': [1],
+                'TEST': 'test'
+              } 
+            },
+            'BAA': [
+              {
+                'ID': 'foo-1'
+              }
+            ]
+          });
+        });
+      });
+    });
   });
 });
 
@@ -786,7 +888,7 @@ describe('usage example', function(){
 
     var decoratedArray = obj.getOrCreateDecoratedArray('items');
     expect(decoratedArray.get(0).foo).toEqual('foobaa');
-    var item = decoratedArray.getObject(0);
+    var item = decoratedArray.getDecoratedObject(0);
     item.put('foo', 'baa');
     expect(item.get('foo')).toEqual('baa');
     expect(decoratedArray.get(0).foo).toEqual('baa');

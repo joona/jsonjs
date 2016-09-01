@@ -100,6 +100,9 @@ function isType(primitive, type) {
   var rval = false;
 
   switch(type) {
+    case 'primitive':
+      return isType(primitive, 'string') || isType(primitive, 'number') || isType(primitive, 'boolean');
+
     case 'array':
       if(typeof primitive == "object" && Array.isArray(primitive)) {
         rval = true;
@@ -127,7 +130,7 @@ function isType(primitive, type) {
       }
       break;
     case 'int':
-      if(isType(primitive, 'number') && Number(primitive) % 1 == 0) {
+      if(isType(primitive, 'number') && Number(primitive) % 1 === 0) {
         rval = true;
       }
       break;
@@ -160,6 +163,88 @@ function isDecoratedArray(array) {
 
 function isDecorated(object) {
   return isDecoratedArray(object) || isDecoratedObject(object);
+}
+
+function _flatten(element, delimiter, pathPrefix) {
+  delimiter || (delimiter = '.');
+  pathPrefix || (pathPrefix = '');
+  var paths = [];
+  if(isType(element, 'object')) {
+    if(!isDecoratedObject(element)) {
+      element = new JSONObject(element); 
+    }  
+
+    var keys = element.keys();
+    var keysLength = keys.length;
+    for(var i = 0; i < keysLength; i++) {
+      var key = keys[i];
+      var val = element.get(key);
+
+      if(isType(val, 'primitive')) {
+        paths.push([pathPrefix + key, val]);
+      } else if(isType(val, 'array') || isType(val, 'object')) {
+        paths = paths.concat(_flatten(val, delimiter, pathPrefix + key + delimiter));
+      } else {
+        throw new Error('Unknown type for key:' + pathPrefix + key);
+      }
+    }
+  } else if(isType(element, 'array')) {
+    if(isDecoratedArray(element)) {
+      element = element.data;
+    }
+
+    var len = element.length;
+    for(var i = 0; i < len; i++) {
+      var val = element[i];
+
+      if(isType(val, 'primitive')) {
+        paths.push([pathPrefix + i, val]);
+      } else if(isType(val, 'array') || isType(val, 'object')) {
+        paths = paths.concat(_flatten(val, delimiter, pathPrefix + i + delimiter));
+      } else {
+        throw new Error('Unknown type for key:' + pathPrefix + i);
+      }
+    }
+  } else {
+    throw new Error('Unknown type. Expecting an array or an object');
+  }
+
+  return paths;
+}
+
+function flatten(element, delimiter) {
+  var flatMap = {};
+  var items = _flatten(element, delimiter);
+  var len = items.length;
+
+  for(var i = 0; i < len; i++) {
+    var k = items[i][0];
+    var v = items[i][1];
+    flatMap[k] = v;
+  }
+
+  return flatMap;
+}
+
+function unflatten(element, delimiter) {
+  delimiter || (delimiter = '.');
+  var keys = Object.keys(element);
+  var len = keys.length;
+
+  var obj = new JSONObject();
+  for(var i = 0; i < len; i++) {
+    var key = keys[i];
+    var keyArray = key.split(delimiter);
+
+    //if(isType(keyArray[keyArray.length - 1], 'number')) {
+    //  var idx = keyArray.pop();
+    //  var arr = obj.getOrCreateArray(keyArray)[idx] = element[key];
+    //} else {
+      obj.put(keyArray, element[key]);
+    //}
+  }
+
+  return obj;
 }
 
 /**
@@ -351,8 +436,16 @@ JSONObject.prototype.put = function(key, value) {
   var i, k;
   for (i = 0; i < keys.length; i++){
     k = keys[i];
-    if(current[k] === undefined) {
-      current[k] = {};
+
+    if(isType(keys[i+1], 'number')) {
+      if(current[k] === undefined) {
+        current[k] = [];
+      }
+
+    } else {
+      if(current[k] === undefined) {
+        current[k] = {};
+      }
     }
 
     if((keys.length - 1) == i) {
@@ -526,7 +619,7 @@ JSONObject.prototype.keys = function(){
  */
 function JSONArray(arr) {
   this.arr = arr || [];
-};
+}
 
 /**
  * Return return original array
@@ -550,13 +643,23 @@ JSONArray.prototype.get = function(idx){
 };
 
 /**
- * Return decorated JSONObject from given index
+ * Return object from given index
  * @param idx
  * @returns {JSONObject}
  */
 JSONArray.prototype.getObject = function(idx){
   var raw = this.get(idx);
-  return new JSONObject(raw);
+  isTypeStrict(raw, 'object');
+  return raw;
+};
+
+/**
+ * Return decorated JSONObject from given index
+ * @param idx
+ * @returns {JSONObject}
+ */
+JSONArray.prototype.getDecoratedObject = function(idx) {
+  return new JSONObject(this.getObject(idx));
 };
 
 /**
@@ -578,13 +681,23 @@ JSONArray.prototype.push = function(item){
   return this.arr.push(item);
 };
 
+JSONArray.prototype.getArray = function(idx){
+  var item = this.get(idx);
+  isTypeStrict(item, 'array');
+  return item;
+};
+
+JSONArray.prototype.getDecoratedArray = function(idx){
+  return new JSONArray(this.getArray(idx));
+};
+
 /**
  * Return size of the array.
  * @returns {int}
  */
 JSONArray.prototype.size = function(){
   return this.arr.length;
-}
+};
 
 module.exports = {
   /**
@@ -717,6 +830,26 @@ module.exports = {
      * @throws {Error}
      * @static
      */
-    isTypeStrict: isTypeStrict
+    isTypeStrict: isTypeStrict,
+
+    /**
+      * Flatten object or array to key value pairs
+      * @param element
+      * @param {string} [delimiter] -- Delimiter for nested keys. Defaults to '.'
+      * @static
+      * @returns {object}
+      */
+
+    flatten: flatten,
+
+    /**
+      * Create nested object from key paths and values
+      * @param {object} paths
+      * @param {string} [delimiter] -- Key delimiter on paths. Defaults to '.'
+      * @static
+      * @returns {JSONObject} 
+      */
+
+    unflatten: unflatten
   }
 };
