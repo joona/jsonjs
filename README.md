@@ -1,5 +1,4 @@
 [![npm version](https://badge.fury.io/js/jsonjs.svg)](http://badge.fury.io/js/jsonjs) 
-![Travis CI](https://travis-ci.org/Inbot/jsonjs.svg?branch=master)
 
 # Introduction 
 
