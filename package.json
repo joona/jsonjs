@@ -1,6 +1,6 @@
 {
   "name": "jsonjs",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Jsonj inspired library for procesing JSON",
   "main": "jsonjs.js",
   "scripts": {
@@ -13,12 +13,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/inbot/jsonjs"
+    "url": "https://github.com/joona/jsonjs"
   },
   "bugs": {
-    "url": "https://github.com/inbot/jsonjs/issues"
+    "url": "https://github.com/joona/jsonjs/issues"
   },
-  "author": "Inbot <dev@inbot.io>",
+  "author": "Joona Kulmala <jmkulmala@gmail.com>",
   "contributors": [
     {
       "name": "Joona Kulmala",
